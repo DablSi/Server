@@ -15,7 +15,6 @@ public class ServerApplication extends HttpServlet {
 
     private HashMap<String, DeviceData> devices;
     private HashMap<Integer, RoomData> rooms;
-    public static int n = 0;
     private final int[] colors = new int[]{ 0xff00ff00, 0xff303f9f };
 
     public ServerApplication() {
@@ -102,6 +101,19 @@ public class ServerApplication extends HttpServlet {
         return rooms.size() + 1;
     }
 
+    //Добавить видео
+    @RequestMapping(value = "/post/video", method = RequestMethod.POST)
+    public Void putVideo(@RequestPart byte[] bytes, int room) {
+        rooms.get(room).video = bytes;
+        System.out.println("Добавлено видео в комнате " + room);
+        return null;
+    }
+
+    //Получение видео
+    @RequestMapping("/get/video/{room}")
+    public byte[] getVideo(@PathVariable("room") int room) {
+        return rooms.get(room).video;
+    }
 
     //Данные каждого гаджета
     private class DeviceData{
@@ -117,6 +129,7 @@ public class ServerApplication extends HttpServlet {
     private class RoomData{
         public LinkedList<String> deviceList;
         public Long time;
+        public byte[] video;
 
         public RoomData(){
             deviceList = new LinkedList<>();
