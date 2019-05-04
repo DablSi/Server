@@ -44,6 +44,7 @@ public class ServerApplication extends HttpServlet {
         rooms.get(room).deviceList.push(device);
         if (date != null) {
             rooms.get(room).time = date;
+            System.out.println("Время: " + date);
         }
         else {
             if(rooms.get(room).deviceList.size() <= colors.length){
@@ -103,8 +104,8 @@ public class ServerApplication extends HttpServlet {
 
     //Добавить видео
     @RequestMapping(value = "/post/video", method = RequestMethod.POST)
-    public Void putVideo(@RequestPart byte[] bytes, int room) {
-        rooms.get(room).video = bytes;
+    public Void putVideo(@RequestPart String bytes, int room) {
+        rooms.get(room).video = bytes.getBytes();
         System.out.println("Добавлено видео в комнате " + room);
         return null;
     }
