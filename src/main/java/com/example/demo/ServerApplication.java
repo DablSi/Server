@@ -65,13 +65,21 @@ public class ServerApplication extends HttpServlet {
         int a = Arrays.binarySearch(colors, color);
         devices.get(rooms.get(room).deviceList.get(a)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
+        devices.remove(rooms.get(room).deviceList.get(a));
+        /*int n = 0;
+        for (String i : devices.keySet()) {
+            if (devices.get(i).room == room)
+                n++;
+        }
+        if (n <= 1)
+            rooms.remove(room);*/
         return null;
     }
 
     //Получить координаты
     @RequestMapping("/get/coords/{device}")
     public Coords getCoords(@PathVariable("device") String device) {
-        return devices.get(device).coords == null ? null : devices.get(device).coords;
+        return devices.get(device).coords;
     }
 
     //Получить время запуска
@@ -82,13 +90,6 @@ public class ServerApplication extends HttpServlet {
             final int room = devices.get(device).room;
             final Long date = rooms.get(room).time;
             if (date != null) {
-                devices.remove(device);
-                for (String i : devices.keySet()) {
-                    if (devices.get(i).room == room)
-                        n++;
-                }
-                if (n <= 1)
-                    rooms.remove(room);
                 return date;
             }
         }
