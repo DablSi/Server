@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
-import sun.rmi.runtime.Log;
 
 
 @EnableAutoConfiguration
@@ -65,21 +64,25 @@ public class ServerApplication extends HttpServlet {
         int a = Arrays.binarySearch(colors, color);
         devices.get(rooms.get(room).deviceList.get(a)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
-        devices.remove(rooms.get(room).deviceList.get(a));
-        /*int n = 0;
-        for (String i : devices.keySet()) {
-            if (devices.get(i).room == room)
-                n++;
-        }
-        if (n <= 1)
-            rooms.remove(room);*/
+        //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
     }
+
 
     //Получить координаты
     @RequestMapping("/get/coords/{device}")
     public Coords getCoords(@PathVariable("device") String device) {
-        return devices.get(device).coords;
+        Coords coords = devices.get(device).coords;
+        if (coords != null) {
+            int n = 0;
+            for (String i : devices.keySet()) {
+                if (devices.get(i).room.equals(devices.get(device).room))
+                    n++;
+            }
+            if (n <= 1)
+                rooms.remove(devices.get(device).room);
+        }
+        return coords == null ? new Coords(-1, -1, -1, -1) : coords;
     }
 
     //Получить время запуска
@@ -105,10 +108,7 @@ public class ServerApplication extends HttpServlet {
     //Получение номера комнаты
     @RequestMapping("/get/room")
     public Integer getRoom() {
-        if (rooms.size() > 0)
-            return rooms.size();
-        else
-            return 1;
+        return rooms.size() + 1;
     }
 
     //Добавить видео
