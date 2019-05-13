@@ -41,10 +41,10 @@ public class ServerApplication extends HttpServlet {
         if (!rooms.containsKey(room)) {
             rooms.put(room, new RoomData());
 
-            rooms.get(room).deviceList.push(device);
+            rooms.get(room).deviceList.addLast(device);
         } else {
             if (!rooms.get(room).deviceList.contains(device)) {
-                rooms.get(room).deviceList.push(device);
+                rooms.get(room).deviceList.addLast(device);
                 if (rooms.get(room).deviceList.size() <= colors.length + 1) {
                     devices.get(device).color = colors[rooms.get(room).deviceList.size() - 2];
                 }
@@ -62,7 +62,7 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
     public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int color) {
         int a = Arrays.binarySearch(colors, color);
-        devices.get(rooms.get(room).deviceList.get(a)).coords = new Coords(x1, y1, x2, y2);
+        devices.get(rooms.get(room).deviceList.get(a+1)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
