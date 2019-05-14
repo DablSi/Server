@@ -15,7 +15,7 @@ public class ServerApplication extends HttpServlet {
 
     private HashMap<String, DeviceData> devices;
     private HashMap<Integer, RoomData> rooms;
-    private final int[] colors = new int[]{0xff00ff00, 0xff303f9f};
+    private final int[] colors = new int[]{0xff00ff00, 0xff303f9f, 0xffff0000};
 
     public ServerApplication() {
         super();
@@ -123,6 +123,12 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping("/get/video/{room}")
     public byte[] getVideo(@PathVariable("room") int room) {
         return rooms.get(room).video;
+    }
+
+    //Получение массива цветов
+    @RequestMapping("/get/colors")
+    public int[] getColors() {
+        return colors;
     }
 
     //Данные каждого гаджета
