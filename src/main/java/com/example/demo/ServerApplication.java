@@ -108,7 +108,7 @@ public class ServerApplication extends HttpServlet {
     //Получение номера комнаты
     @RequestMapping("/get/room")
     public Integer getRoom() {
-        return rooms.size() + 1;
+        return /*rooms.size() +*/ 1;
     }
 
     //Добавить видео
