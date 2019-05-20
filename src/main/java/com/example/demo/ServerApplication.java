@@ -131,6 +131,19 @@ public class ServerApplication extends HttpServlet {
         return colors;
     }
 
+    //Добавить время запуска видео
+    @RequestMapping(value = "/post/startVideo", method = RequestMethod.POST)
+    public Void putStartVideo(@RequestPart Integer room, Long date) {
+        rooms.get(room).videoStart = date;
+        return null;
+    }
+
+    //Получить время запуска видео
+    @RequestMapping("/get/startVideo/{device}")
+    public Long getStartVideo(@PathVariable("device") String device) {
+        return rooms.get(devices.get(device).room).videoStart;
+    }
+
     //Данные каждого гаджета
     private class DeviceData {
         public Integer color, room;
@@ -144,7 +157,7 @@ public class ServerApplication extends HttpServlet {
     //Данные каждой комнаты
     private class RoomData {
         public LinkedList<String> deviceList;
-        public Long time;
+        public Long time, videoStart;
         public byte[] video;
 
         public RoomData() {
