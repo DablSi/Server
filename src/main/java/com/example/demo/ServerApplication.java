@@ -1,12 +1,20 @@
 package com.example.demo;
 
 
+import java.io.*;
 import java.util.*;
 
 import javax.servlet.http.HttpServlet;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 
 @EnableAutoConfiguration
@@ -62,7 +70,7 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
     public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int color) {
         int a = Arrays.binarySearch(colors, color);
-        devices.get(rooms.get(room).deviceList.get(a+1)).coords = new Coords(x1, y1, x2, y2);
+        devices.get(rooms.get(room).deviceList.get(a + 1)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
@@ -111,19 +119,19 @@ public class ServerApplication extends HttpServlet {
         return rooms.size() + 1;
     }
 
-    //Добавить видео
+    /*//Добавить видео
     @RequestMapping(value = "/post/video", method = RequestMethod.POST)
-    public Void putVideo(@RequestPart String bytes, int room) {
-        rooms.get(room).video = bytes.getBytes();
+    public Void putVideo(@RequestPart("room") int room, @RequestBody RequestBody requestBody) {
+        rooms.get(room).video = requestBody.toString().getBytes();
         System.out.println("Добавлено видео в комнате " + room);
         return null;
-    }
+    }*/
 
-    //Получение видео
+    /*//Получение видео
     @RequestMapping("/get/video/{room}")
     public byte[] getVideo(@PathVariable("room") int room) {
         return rooms.get(room).video;
-    }
+    }*/
 
     //Получение массива цветов
     @RequestMapping("/get/colors")
@@ -149,7 +157,24 @@ public class ServerApplication extends HttpServlet {
                 return date;
             }
         }
-        return (long)0;
+        return (long) 0;
+    }
+
+    @GetMapping(value = "/download/{room}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public @ResponseBody
+    byte[] getFile(@PathVariable("room") int room) {
+        return rooms.get(room).video;
+    }
+
+    @PostMapping(value = "/upload")
+    public Void uploadVideo(@RequestPart("video") MultipartFile video, @RequestPart("room") int room) {
+        System.out.println("Видео " + video.getOriginalFilename()+ " в комнате " + room);
+        try {
+            rooms.get(room).video = video.getBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //Данные каждого гаджета

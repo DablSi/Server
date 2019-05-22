@@ -10,6 +10,14 @@ import javax.servlet.MultipartConfigElement;
 @SpringBootApplication
 public class DemoApplication {
 
+	@Bean
+	public MultipartConfigElement multipartConfigElement() {
+		MultipartConfigFactory factory = new MultipartConfigFactory();
+		factory.setMaxFileSize("50MB");
+		factory.setMaxRequestSize("50MB");
+		return factory.createMultipartConfig();
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
