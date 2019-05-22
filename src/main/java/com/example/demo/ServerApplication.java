@@ -141,7 +141,15 @@ public class ServerApplication extends HttpServlet {
     //Получить время запуска видео
     @RequestMapping("/get/startVideo/{device}")
     public Long getStartVideo(@PathVariable("device") String device) {
-        return rooms.get(devices.get(device).room).videoStart;
+        if (devices.containsKey(device)) {
+            int n = 0;
+            final int room = devices.get(device).room;
+            final Long date = rooms.get(room).videoStart;
+            if (date != null) {
+                return date;
+            }
+        }
+        return (long)0;
     }
 
     //Данные каждого гаджета
