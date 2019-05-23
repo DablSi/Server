@@ -70,7 +70,7 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
     public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int color) {
         int a = Arrays.binarySearch(colors, color);
-        devices.get(rooms.get(room).deviceList.get(a + 1)).coords = new Coords(x1, y1, x2, y2);
+        devices.get(rooms.get(room).deviceList.get(a)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
@@ -143,6 +143,7 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping(value = "/post/startVideo", method = RequestMethod.POST)
     public Void putStartVideo(@RequestPart Integer room, Long date) {
         rooms.get(room).videoStart = date;
+        System.out.println("Время запуска видео в комнате " + room + " добавлено");
         return null;
     }
 
@@ -163,6 +164,7 @@ public class ServerApplication extends HttpServlet {
     @GetMapping(value = "/download/{room}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public @ResponseBody
     byte[] getFile(@PathVariable("room") int room) {
+        System.out.println("Девайс из комнаты " + room + " получил видео");
         return rooms.get(room).video;
     }
 
