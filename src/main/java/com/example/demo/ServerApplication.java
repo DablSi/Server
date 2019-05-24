@@ -70,7 +70,7 @@ public class ServerApplication extends HttpServlet {
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
     public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int color) {
         int a = Arrays.binarySearch(colors, color);
-        devices.get(rooms.get(room).deviceList.get(a)).coords = new Coords(x1, y1, x2, y2);
+        devices.get(rooms.get(room).deviceList.get(a + 1)).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
@@ -82,6 +82,7 @@ public class ServerApplication extends HttpServlet {
     public Coords getCoords(@PathVariable("device") String device) {
         Coords coords = devices.get(device).coords;
         if (coords != null) {
+            System.out.println(device + " получил координаты");
             int n = 0;
             for (String i : devices.keySet()) {
                 if (devices.get(i).room.equals(devices.get(device).room))
