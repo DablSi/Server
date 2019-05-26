@@ -166,7 +166,7 @@ public class ServerApplication extends HttpServlet {
     public @ResponseBody
     byte[] getFile(@PathVariable("room") int room) {
         System.out.println("Девайс из комнаты " + room + " получил видео");
-        return rooms.get(room).video;
+        return rooms.get(room).video == null ? new byte[1] : rooms.get(room).video;
     }
 
     @PostMapping(value = "/upload")
