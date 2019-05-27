@@ -105,7 +105,7 @@ public class ServerApplication extends HttpServlet {
                 return date;
             }
         }
-        return null;
+        return (long)-1;
     }
 
     //Получить цвет
