@@ -23,7 +23,7 @@ public class ServerApplication extends HttpServlet {
 
     private HashMap<String, DeviceData> devices;
     private HashMap<Integer, RoomData> rooms;
-    private final int[] colors = new int[]{0xff00ff00, 0xff303f9f, 0xffffff00};
+    private final int[] colors = new int[]{0xff00ff00, 0xff0000ff, 0xffff0000, 0xffffffff, 0xff000000};
 
     public ServerApplication() {
         super();
@@ -54,7 +54,16 @@ public class ServerApplication extends HttpServlet {
             if (!rooms.get(room).deviceList.contains(device)) {
                 rooms.get(room).deviceList.addLast(device);
                 if (rooms.get(room).deviceList.size() <= colors.length + 1) {
-                    devices.get(device).color = colors[rooms.get(room).deviceList.size() - 2];
+                    if (rooms.get(room).colorIndex2 == colors.length) {
+                        rooms.get(room).colorIndex2 = 0;
+                        rooms.get(room).colorIndex1++;
+                    }
+                    if(rooms.get(room).colorIndex1 == rooms.get(room).colorIndex2)
+                        rooms.get(room).colorIndex2++;
+
+                    devices.get(device).colors[0] = colors[rooms.get(room).colorIndex1];
+                    devices.get(device).colors[1] = colors[rooms.get(room).colorIndex2];
+                    rooms.get(room).colorIndex2++;
                 }
             }
         }
@@ -68,9 +77,8 @@ public class ServerApplication extends HttpServlet {
 
     //Добавить координаты
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
-    public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int color) {
-        int a = Arrays.binarySearch(colors, color);
-        devices.get(rooms.get(room).deviceList.get(a + 1)).coords = new Coords(x1, y1, x2, y2);
+    public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int[] color) {
+        devices.get(rooms.get(room).deviceList.get(color[0] * 5 + color[1])).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
@@ -105,13 +113,13 @@ public class ServerApplication extends HttpServlet {
                 return date;
             }
         }
-        return (long)-1;
+        return (long) -1;
     }
 
     //Получить цвет
     @RequestMapping("/get/color/{device}")
-    public Integer getColor(@PathVariable("device") String device) {
-        return devices.get(device).color;
+    public int[] getColor(@PathVariable("device") String device) {
+        return devices.get(device).colors;
     }
 
     //Получение номера комнаты
@@ -133,6 +141,15 @@ public class ServerApplication extends HttpServlet {
     public byte[] getVideo(@PathVariable("room") int room) {
         return rooms.get(room).video;
     }*/
+
+    //Получение индексов цветов
+    @RequestMapping("/get/indexes/{room}")
+    public int[] getIndexes(@PathVariable("room") int room) {
+        int[] indexes = new int[2];
+        indexes[0] = rooms.get(room).colorIndex1;
+        indexes[1] = rooms.get(room).colorIndex2;
+        return indexes;
+    }
 
     //Получение массива цветов
     @RequestMapping("/get/colors")
@@ -171,7 +188,7 @@ public class ServerApplication extends HttpServlet {
 
     @PostMapping(value = "/upload")
     public Void uploadVideo(@RequestPart("video") MultipartFile video, @RequestPart("room") int room) {
-        System.out.println("Видео " + video.getOriginalFilename()+ " в комнате " + room);
+        System.out.println("Видео " + video.getOriginalFilename() + " в комнате " + room);
         try {
             rooms.get(room).video = video.getBytes();
         } catch (IOException e) {
@@ -182,7 +199,8 @@ public class ServerApplication extends HttpServlet {
 
     //Данные каждого гаджета
     private class DeviceData {
-        public Integer color, room;
+        public Integer room;
+        public int[] colors = new int[2];
         public Coords coords;
 
         public DeviceData(int newRoom) {
@@ -195,6 +213,7 @@ public class ServerApplication extends HttpServlet {
         public LinkedList<String> deviceList;
         public Long time, videoStart;
         public byte[] video;
+        public int colorIndex1 = 0, colorIndex2 = 1;
 
         public RoomData() {
             deviceList = new LinkedList<>();
