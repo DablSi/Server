@@ -23,7 +23,7 @@ public class ServerApplication extends HttpServlet {
 
     private HashMap<String, DeviceData> devices;
     private HashMap<Integer, RoomData> rooms;
-    private final int[] colors = new int[]{0xff00ff00, 0xff0000ff, 0xffff0000, 0xffffffff, 0xff000000};
+    private final int[] colors = new int[]{0xff00ff00, 0xffff0000, 0xffffffff};
 
     public ServerApplication() {
         super();
@@ -78,7 +78,7 @@ public class ServerApplication extends HttpServlet {
     //Добавить координаты
     @RequestMapping(value = "/post/coords", method = RequestMethod.POST)
     public Void putCoords(@RequestPart int room, int x1, int y1, int x2, int y2, int[] color) {
-        devices.get(rooms.get(room).deviceList.get(color[0] * 5 + color[1])).coords = new Coords(x1, y1, x2, y2);
+        devices.get(rooms.get(room).deviceList.get(color[0] * colors.length + color[1])).coords = new Coords(x1, y1, x2, y2);
         System.out.println("Coords: " + x1 + "," + y1 + " " + x2 + "," + y2);
         //devices.remove(rooms.get(room).deviceList.get(a));
         return null;
