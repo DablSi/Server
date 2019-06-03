@@ -23,7 +23,7 @@ public class ServerApplication extends HttpServlet {
 
     private HashMap<String, DeviceData> devices;
     private HashMap<Integer, RoomData> rooms;
-    private final int[] colors = new int[]{0xff00ff00, 0xffff0000, 0xffffffff};
+    private final int[] colors = new int[]{0xff00ff00, 0xffff0000, 0xff0000ff, 0xff000000, 0xffffffff};
 
     public ServerApplication() {
         super();
